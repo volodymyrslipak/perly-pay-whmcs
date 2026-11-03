@@ -37,7 +37,8 @@ Composer: Perly Pay's PHP SDK is inside, under its own namespace.
   currency. The transaction id is the Perly Pay payment (`pay_…`); the
   Gateway Log names the network, the coin amount and the transaction link.
 - Part payments, expiry, review holds and refunds are written to the
-  Gateway Log, without recording a payment.
+  Gateway Log, without recording a payment. A refund's amount, address and
+  transaction are the ones Perly Pay's API returns for that refund.
 - A replayed or doubled webhook records nothing twice: the module claims
   the payment before recording it, and WHMCS's `checkCbTransID` stands
   behind that.
@@ -74,6 +75,11 @@ paste its secret, then pay one small real invoice and refund it.
 - The callback acts only on a valid `Perly-Signature` (HMAC-SHA256 of the
   timestamp and the raw body, at most five minutes old, compared in constant
   time), and only on Perly Pay invoices this WHMCS made.
+- A signed event is not taken at its word: its invoice is retrieved from
+  Perly Pay with the module's key and only that answer is used. Refund
+  details are also confirmed with Perly Pay's API, never taken from the
+  webhook: the Gateway Log says to send what the refund Perly Pay returns
+  holds, to its address.
 - The pay button's form is signed with your secret key, so a visitor cannot
   change the amount or the invoice it pays.
 - Keys, secrets, signatures and clients' emails never go to the Gateway Log.
@@ -95,3 +101,8 @@ paste its secret, then pay one small real invoice and refund it.
 ## Licence
 
 MIT. Perly Pay's PHP SDK inside (`vendor/perly-pay-sdk`) is MIT too.
+
+## Changelog
+
+- **1.0.1**: Every payment is confirmed with Perly Pay's API before an order is completed: a signed webhook alone no longer marks an order paid, so a leaked signing secret cannot ship an unpaid order. Refund details are also confirmed with Perly Pay's API, never taken from the webhook, so a leaked signing secret cannot point a refund at someone else's wallet.
+- **1.0.0**: First release.

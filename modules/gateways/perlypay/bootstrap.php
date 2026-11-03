@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 if (!defined('PERLYPAY_WHMCS_VERSION')) {
-    define('PERLYPAY_WHMCS_VERSION', '1.0.0');
+    define('PERLYPAY_WHMCS_VERSION', '1.0.1');
 
     spl_autoload_register(static function (string $class): void {
         $roots = [
